@@ -101,7 +101,7 @@ for file in files:
     koudur=range(0,tan,24)
     start = time.time() 
     
-     # Aggregating to daily timestep for each variable   
+    # Aggregating to daily timestep for each variable   
     if 'u10' in vc and 'v10' in vc:
         v10= hourly_v['v10']
         u10 = hourly_v['u10']
@@ -128,8 +128,10 @@ for file in files:
         tp= hourly_v['tp'] 
         #convertion to mm
         tp=tp*1000
-        daily_pr=tp.resample(time='D').max('time')  
-        dptest= daily_pr
+        daily_pr = tp.resample(time='D', closed='right', label='right').max('time')
+        daily_pr = daily_pr[0:-1,:,:]  # remove last day of month as it is incomplete (23:00-00:00 missing) and fully captured in following month file
+
+        #dptest= daily_pr
         #dptest.plot.surface(yincrease=True)
         daily_pr=daily_pr.rename('tp')
         if mo==1:
