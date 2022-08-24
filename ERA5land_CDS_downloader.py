@@ -30,17 +30,17 @@ os.chdir(dir_path)
 config = load_config("cds_config.cfg")
 # key text file containing (1) proxy key, (2) CDS API key, (3) working directory of the data
 
-# Proxy settings
-proxy = config ['proxyKey']
-os.environ['http_proxy'] = proxy 
-os.environ['HTTP_PROXY'] = proxy
-os.environ['https_proxy'] = proxy
-os.environ['HTTPS_PROXY'] = proxy
+# Proxy settings (comment this part if your system does not use a proxy)
+#proxy = config ['proxyKey']
+#os.environ['http_proxy'] = proxy 
+#os.environ['HTTP_PROXY'] = proxy
+#os.environ['https_proxy'] = proxy
+#os.environ['HTTPS_PROXY'] = proxy
 
 CDSAPI_URL="https://cds.climate.copernicus.eu/api/v2"
 # Load personnal API Key
 CDSAPI_KEY=config['CDSAPI_KEY']
-c = cdsapi.Client(key=CDSAPI_KEY, url=CDSAPI_URL) 
+c = cdsapi.Client(key=CDSAPI_KEY, url=CDSAPI_URL, timeout=1500, quiet=False, debug=True)
 
 # select variable(s); name must be a valid ERA5 CDS API name.
 # Here I select varaibles necessary to compute evapotranspiration
@@ -58,7 +58,7 @@ print('list: ', varnames)
 
 #this list has to be modified to include more variables
 pair_var=[['u10', 'v10','2t','str','ssrd','2d','tp'],
-          ['10m_u_component_of_wind', '10m_v_component_of_wind', '2m_temperature','surface_net_thermal_radiation', 'surface_downward_solar_radiation','2m_dewpoint_temperature','total_precipitation']]
+          ['10m_u_component_of_wind', '10m_v_component_of_wind', '2m_temperature','surface_net_thermal_radiation', 'surface_solar_radiation_downwards','2m_dewpoint_temperature','total_precipitation']]
 
 pair_match=set(pair_var[0]).intersection(varnames)
 nf = [item for item,x in enumerate(pair_var[0]) if x in varnames]
@@ -104,7 +104,7 @@ months = [ "01", "02", "03", "04", "05", "06",
 
 # Choose directory where to download files
 dire=config["download_folder"]
-direh=dire + "\hourly"
+direh=dire + "/hourly"
 os.chdir(direh)
 
 # main loop to download variables
