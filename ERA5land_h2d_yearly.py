@@ -6,7 +6,6 @@ Created on Wed Oct 27 17:29:27 2021
 
 #!/usr/bin/env python  
 # -*- coding: utf-8 -*-
-
 __author__ = "Alois Tilloy"
 __date__ = "June 2022"
 # Import the os module
@@ -277,7 +276,7 @@ for file in files:
         if 'tp' in vc:
             vr=var[4]
             print ('Start generating netcdf file for variable: '+ vr)
-            ncfile_tp = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_tp_' + str(yr) + '.nc'),template_lat,template_lon,vr,'degrees Celcius',compression,1)
+            ncfile_tp = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_tp_' + str(yr) + '.nc'),template_lat,template_lon,vr,'mm',compression,1)
             time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
