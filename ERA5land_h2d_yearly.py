@@ -194,6 +194,7 @@ for file in files:
     print(end - start)
     
     # Generate yearly files for each variable separately
+    compression=0
     if mo==12:
         file_dates_dly = pd.date_range(start=datetime(yr,1,1), end=datetime(yr+1,1,1)-pd.Timedelta(days=1), freq='D')
         template_lat = np.array(hourly_v['latitude'][:])
