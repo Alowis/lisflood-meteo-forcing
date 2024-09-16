@@ -15,7 +15,7 @@ __date__ = "January 2022"
 import os, sys, glob, time, pdb
 import pandas as pd
 import numpy as np
-from config_comp import *
+#from config_comp import *
 import netCDF4 as nc
 from netCDF4 import Dataset
 from skimage.transform import resize
@@ -155,7 +155,7 @@ def initialize_netcdf(outfile,lat,lon,varname,units,compression,least_significan
     ncfile.variables['lat'].standard_name = 'latitude'
     ncfile.variables['lat'].long_name = 'latitude'
     ncfile.createVariable('time', 'i4', 'time',complevel=4, zlib=True)
-    ncfile.variables['time'].units = 'days since 1979-01-01 00:00:00' #initial date has an importance when it comes to LISFLOOD
+    ncfile.variables['time'].units = 'days since 1950-01-01 00:00:00' #initial date has an importance when it comes to LISFLOOD
     ncfile.variables['time'].long_name = 'time'
     ncfile.variables['time'].calendar = 'proleptic_gregorian'
     if compression=="1":

@@ -6,7 +6,6 @@ Created on Wed Oct 27 17:29:27 2021
 
 #!/usr/bin/env python  
 # -*- coding: utf-8 -*-
-
 __author__ = "Alois Tilloy"
 __date__ = "June 2022"
 # Import the os module
@@ -101,7 +100,7 @@ for file in files:
     koudur=range(0,tan,24)
     start = time.time() 
     
-     # Aggregating to daily timestep for each variable   
+    # Aggregating to daily timestep for each variable   
     if 'u10' in vc and 'v10' in vc:
         v10= hourly_v['v10']
         u10 = hourly_v['u10']
@@ -128,8 +127,10 @@ for file in files:
         tp= hourly_v['tp'] 
         #convertion to mm
         tp=tp*1000
-        daily_pr=tp.resample(time='D').max('time')  
-        dptest= daily_pr
+        daily_pr = tp.resample(time='D', closed='right', label='right').max('time')
+        daily_pr = daily_pr[0:-1,:,:]  # remove last day of month as it is incomplete (23:00-00:00 missing) and fully captured in following month file
+
+        #dptest= daily_pr
         #dptest.plot.surface(yincrease=True)
         daily_pr=daily_pr.rename('tp')
         if mo==1:
@@ -192,6 +193,7 @@ for file in files:
     print(end - start)
     
     # Generate yearly files for each variable separately
+    compression=0
     if mo==12:
         file_dates_dly = pd.date_range(start=datetime(yr,1,1), end=datetime(yr+1,1,1)-pd.Timedelta(days=1), freq='D')
         template_lat = np.array(hourly_v['latitude'][:])
@@ -201,7 +203,7 @@ for file in files:
             vr=var[7]
             print ('Start generating netcdf file for variable: '+ vr)
             ncfile_v10 = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_v10_' + str(yr) + '.nc'),template_lat,template_lon,vr,'m s-1',compression,1)
-            time_value =(file_dates_dly-pd.to_datetime(datetime(1979, 1, 1)))
+            time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
             timef=np.asarray(list(map(int,tlist)))
@@ -213,7 +215,7 @@ for file in files:
             vr=var[6]
             print ('Start generating netcdf file for variable: '+ vr)
             ncfile_u10 = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_u10_' + str(yr) + '.nc'),template_lat,template_lon,vr,'m s-1',compression,1)
-            time_value =(file_dates_dly-pd.to_datetime(datetime(1979, 1, 1)))
+            time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
             timef=np.asarray(list(map(int,tlist)))
@@ -226,7 +228,7 @@ for file in files:
             vr=var[1]
             print ('Start generating netcdf file for variable: '+ vr)
             ncfile_ta = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_ta_' + str(yr) + '.nc'),template_lat,template_lon,vr,'degrees Celcius',compression,1)
-            time_value =(file_dates_dly-pd.to_datetime(datetime(1979, 1, 1)))
+            time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
             timef=np.asarray(list(map(int,tlist)))
@@ -238,7 +240,7 @@ for file in files:
             vr=var[3]
             print ('Start generating netcdf file for variable: '+ vr)
             ncfile_td = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_td_' + str(yr) + '.nc'),template_lat,template_lon,vr,'degrees Celcius',compression,1)
-            time_value =(file_dates_dly-pd.to_datetime(datetime(1979, 1, 1)))
+            time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
             timef=np.asarray(list(map(int,tlist)))
@@ -250,7 +252,7 @@ for file in files:
             vr=var[5]
             print ('Start generating netcdf file for variable: '+ vr)
             ncfile_rgd = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_rgd_' + str(yr) + '.nc'),template_lat,template_lon,vr,'J m-2 d-1',compression,1)
-            time_value =(file_dates_dly-pd.to_datetime(datetime(1979, 1, 1)))
+            time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
             timef=np.asarray(list(map(int,tlist)))
@@ -263,7 +265,7 @@ for file in files:
             vr=var[2]
             print ('Start generating netcdf file for variable: '+ vr)
             ncfile_rn = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_rn_' + str(yr) + '.nc'),template_lat,template_lon,vr,'J m-2 d-1',compression,1)
-            time_value =(file_dates_dly-pd.to_datetime(datetime(1979, 1, 1)))
+            time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
             timef=np.asarray(list(map(int,tlist)))
@@ -274,8 +276,8 @@ for file in files:
         if 'tp' in vc:
             vr=var[4]
             print ('Start generating netcdf file for variable: '+ vr)
-            ncfile_tp = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_tp_' + str(yr) + '.nc'),template_lat,template_lon,vr,'degrees Celcius',compression,1)
-            time_value =(file_dates_dly-pd.to_datetime(datetime(1979, 1, 1)))
+            ncfile_tp = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_tp_' + str(yr) + '.nc'),template_lat,template_lon,vr,'mm',compression,1)
+            time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
             timef=np.asarray(list(map(int,tlist)))
@@ -287,7 +289,7 @@ for file in files:
             vr=var[0]
             print ('Start generating netcdf file for variable: '+ vr)
             ncfile_ws = initialize_netcdf(os.path.join(scratchoutdir,'e5ld_01deg_ws_' + str(yr) + '.nc'),template_lat,template_lon,vr,'m s-1',compression,1)
-            time_value =(file_dates_dly-pd.to_datetime(datetime(1979, 1, 1)))
+            time_value =(file_dates_dly-pd.to_datetime(datetime(1950, 1, 1)))
             ti0=time_value.astype('timedelta64[D]')
             tlist=ti0.tolist()
             timef=np.asarray(list(map(int,tlist)))
